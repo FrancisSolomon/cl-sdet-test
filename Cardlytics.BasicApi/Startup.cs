@@ -1,14 +1,6 @@
-﻿using AutoMapper;
-
-using Cardlytics.BasicApi.DataAccess;
-using Cardlytics.BasicApi.Mapping;
-using Cardlytics.BasicApi.Middleware;
-
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,8 +8,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 using StructureMap;
-
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace Cardlytics.BasicApi
 {
@@ -44,20 +34,6 @@ namespace Cardlytics.BasicApi
                     opt.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                     opt.SerializerSettings.Converters.Add(new StringEnumConverter());
                 });
-            services
-                .AddApiVersioning(o =>
-                {
-                    o.ReportApiVersions = true;
-                    o.Conventions.Add(new VersionByNamespaceConvention());
-                });
-            services
-                .AddSwaggerGen(opt =>
-                {
-                    opt.SwaggerDoc("v1", new Info { Title = "Institutions Api", Version = "v1" });
-                });
-            services
-                .AddDbContext<BasicDbContext>(
-                    opt => opt.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=EFProviders.InMemory;Trusted_Connection=True;ConnectRetryCount=0"));
         }
 
         public void ConfigureContainer(Registry registry)
@@ -84,19 +60,7 @@ namespace Cardlytics.BasicApi
 
             app.UseHttpsRedirection();
 
-            // register middleware specific order
-            app.UseRequestLogMiddleware()
-                .UseExceptionCaptureMiddleware();
-
             app.UseMvc();
-            app.UseSwagger();
-            app.UseSwaggerUI(opt =>
-            {
-                opt.SwaggerEndpoint("/swagger/v1/swagger.json", "Institutions API");
-            });
-
-            // Set up Mappings
-            Mapper.Initialize(cfg => cfg.AddProfile<AutoMapperConfig>());
         }
     }
 }

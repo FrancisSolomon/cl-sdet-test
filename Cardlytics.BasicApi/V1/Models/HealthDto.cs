@@ -6,8 +6,6 @@
 
         public bool ServiceHealthy { get; set; }
 
-        public bool DataAccessHealthy { get; set; }
-
         public string HealthMessage { get; set; }
     }
 }

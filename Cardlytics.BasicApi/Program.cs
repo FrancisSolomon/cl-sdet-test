@@ -1,16 +1,7 @@
-﻿using System;
-using System.Reflection;
-
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
-
-using NLog;
-using NLog.Web;
 
 using StructureMap.AspNetCore;
-
-using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Cardlytics.BasicApi
 {
@@ -18,25 +9,7 @@ namespace Cardlytics.BasicApi
     {
         public static void Main(string[] args)
         {
-            NLogBuilder.ConfigureNLog("nlog.config");
-
-            var programLogger = LogManager.GetCurrentClassLogger();
-            var serviceName = Assembly.GetExecutingAssembly().GetName();
-
-            try
-            {
-                programLogger.Info($"Starting service {serviceName}");
-                CreateWebHostBuilder(args).Build().Run();
-            }
-            catch (Exception ex)
-            {
-                programLogger.Error(ex, $"Starting service {serviceName}");
-            }
-            finally
-            {
-                programLogger.Info($"Shutting down service {serviceName}");
-                LogManager.Shutdown();
-            }
+            CreateWebHostBuilder(args).Build().Run();
         }
 
         private static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
@@ -44,12 +17,6 @@ namespace Cardlytics.BasicApi
                 .CreateDefaultBuilder(args)
                 .UseIISIntegration()
                 .UseStartup<Startup>()
-                .ConfigureLogging(log =>
-                {
-                    log.ClearProviders();
-                    log.SetMinimumLevel(LogLevel.Trace);
-                })
-                .UseNLog()
                 .UseStructureMap();
     }
 }

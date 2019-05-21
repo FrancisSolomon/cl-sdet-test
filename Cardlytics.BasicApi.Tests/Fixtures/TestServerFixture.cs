@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Net.Http;
-
-using AutoMapper;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 using StructureMap;
@@ -26,12 +22,6 @@ namespace Cardlytics.BasicApi.Tests.Fixtures
                 .UseStartup<Startup>()
                 .ConfigureTestServices(s =>
                 {
-                    // remove db context from service collection
-                    var existingContext = s
-                        .Single(d => d.ServiceType.IsSubclassOf(typeof(DbContext)));
-
-                    s.Remove(existingContext);
-
                     testServiceConfiguration?.Invoke(s);
                 })
                 .UseStructureMap(structureMapOverrides);
@@ -50,7 +40,6 @@ namespace Cardlytics.BasicApi.Tests.Fixtures
         public void Dispose()
         {
             _testServer.Dispose();
-            Mapper.Reset();
         }
     }
 }
